@@ -6,9 +6,24 @@ const { createServer } = require("http");
 const path = require("path");
 const { Server } = require("socket.io");
 
+const { instrument } = require("@socket.io/admin-ui");
+
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors:  {
+    origin: ["https://admin.socket.io/"],
+    credentials: false
+  }
+});
+
+instrument(io, {
+  auth: {
+    type: "basic",
+    username: "admin",
+    password: "$2a$12$i5bjBkaDETQK18vVI4y8ru32TSSMNGH5ibxFL4VSVL1K9WpH0Pf56"
+  }
+});
 
 app.use(express.static(path.join(__dirname, "views")))
 
@@ -119,4 +134,4 @@ students.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(3000);
+httpServer.listen(4000);
